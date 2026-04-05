@@ -1,0 +1,101 @@
+////////////////////////////////////////////////////////////////////
+//DeRap: Water\data\CalmWater_blue.rvmat
+//Produced from mikero's Dos Tools Dll version 10.13
+//https://mikero.bytex.digital/Downloads
+//'now' is Thu Apr 02 18:04:15 2026 : 'file' last modified on Wed Nov 08 16:45:40 2017
+////////////////////////////////////////////////////////////////////
+
+#define _ARMA_
+
+ambient[] = {0.003,0.07,0.04,1.0};
+diffuse[] = {0.09,0.09,0.09,0.0};
+forcedDiffuse[] = {0.5,0.5,2.0,1.25};
+emmisive[] = {0.75,0.009,1.0,0.0};
+specular[] = {0.93,0.5,0.1,0.5};
+specularPower = 2000;
+PixelShaderID = "CalmWater";
+VertexShaderID = "CalmWater";
+class Stage1
+{
+	texture = "a3\map_altis\data\water\data\detailmap_4444.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
+class Stage2
+{
+	texture = "a3\map_altis\data\water\data\heightmaps12_dxt5.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
+class Stage3
+{
+	texture = "a3\map_altis\data\water\data\detailmap_4444.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
+class Stage4
+{
+	texture = "a3\map_altis\data\water\data\edgefoam_dxt1.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
+class Stage5
+{
+	texture = "a3\map_altis\data\water\data\causticsla_dxt5.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
+class Stage6
+{
+	texture = "a3\map_altis\data\water\data\gaussnoise64_4444.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
+class Stage7
+{
+	texture = "a3\map_altis\data\water\data\env03_co.paa";
+	uvSource = "tex";
+	class uvTransform
+	{
+		aside[] = {1,0,0};
+		up[] = {0,1,0};
+		dir[] = {0,0,0};
+		pos[] = {0,0,0};
+	};
+};
