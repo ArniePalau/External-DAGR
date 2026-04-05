@@ -1,0 +1,6 @@
+//<'map_altis_data_layers_00_00.pbo' properties via Mikero's dos tools, dll version 10.13>
+prefix=a3\map_altis\data\layers\00_00;
+product=Arma 3;
+version=0000;
+//PboType=Arma Unknown pbo type (no config or mission).;
+//</properties>

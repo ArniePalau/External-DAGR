@@ -1,0 +1,18 @@
+{
+  "name": "arma-bridge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "extract-map": "node map-extractor.js",
+    "tool-check": "node tool-check.js",
+    "paa-to-png": "node paa-to-png.mjs"
+  },
+  "dependencies": {
+    "@bis-toolkit/paa": "^1.0.2",
+    "pngjs": "^7.0.0",
+    "tail": "^2.2.6",
+    "ws": "^8.20.0"
+  }
+}

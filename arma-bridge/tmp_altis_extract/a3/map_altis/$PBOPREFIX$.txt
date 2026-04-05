@@ -1,0 +1,6 @@
+//<'map_altis.pbo' properties via Mikero's dos tools, dll version 10.13>
+prefix=a3\map_altis;
+product=Arma 3;
+version=148442;
+//PboType=Arma Addon;
+//</properties>
