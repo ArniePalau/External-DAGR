@@ -1,3 +1,101 @@
+# External DAGR Bridge
+### Arma 3 Telemetry Companion
+
+External DAGR Bridge connects Arma 3 live telemetry to a companion interface, providing real-time map, marker, and navigation data.
+
+- This repository provides the **local bridge server + app** (open source).
+- The **in-game addon** is distributed separately via Steam Workshop.
+
+> 📦 **Workshop item:** [External DAGR Bridge](https://steamcommunity.com/sharedfiles/filedetails/?id=3700274411)
+
+---
+
+## Features
+
+- Real-time telemetry from Arma 3
+- Live map and marker synchronization
+- Local bridge service (HTTP/WebSocket)
+- Companion UI launcher with connection status
+- Open-source workflow for customization
+
+---
+
+## Requirements
+
+- [Arma 3](https://store.steampowered.com/app/107410/Arma_3/)
+- [Node.js](https://nodejs.org) (for the local bridge/app)
+- Recommended: [ExtractPbo](https://mikero.bytex.digital/Downloads) for best map extraction quality
+
+---
+
+## Setup Instructions
+
+### Step 1 — Install a PBO Extractor
+
+Download `ExtractPbo.exe` from:
+👉 https://mikero.bytex.digital/Downloads
+
+> If you've ever made Arma missions, you likely already have this.
+
+---
+
+### Step 2 — Subscribe to the Workshop Mod
+
+Subscribe and enable **@microdagr_bridge** in the Arma 3 Launcher:
+👉 https://steamcommunity.com/sharedfiles/filedetails/?id=3700274411
+
+---
+
+### Step 3 — Download This Repo (Bridge + App)
+
+Clone or download this repository, then open the root folder and continue below.
+
+---
+
+### Step 4 — Run the Automatic Setup
+
+**4.1** Run `Install_All.bat`
+
+**4.2** Run `Start_Launcher.bat` — a launcher window should appear.
+
+In the launcher window, click **Start All**.
+
+- Launch Arma 3 with the **@microdagr_bridge** mod enabled.
+- Open the local or network app link shown in the launcher.
+
+---
+
+## Alternative Methods *(if the above fails)*
+
+### Manual Dependency Installation
+> Only if `Install_All.bat` fails:
+```bash
+# In arma-bridge/
+npm install
+
+# In microdagr-app/
+npm install
+```
+
+### Manual Startup
+> Only if `Start_Launcher.bat` fails:
+
+- Run `Start_Bridge.bat`
+- Run `Start_App.bat`
+
+---
+
+## Notes
+
+- All data is processed **locally on your PC** (LAN/local usage only).
+- Some advanced telemetry integrations are improved when **ACE/CBA** features are available.
+
+---
+
+## License
+
+[AGPL-3.0](LICENSE)
+
 # External DAGR Bridge Workspace
 
 This workspace connects Arma 3 telemetry to a local web/mobile UI that mimics a MicroDAGR-style experience.
