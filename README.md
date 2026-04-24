@@ -109,22 +109,6 @@ npm install
 
 ---
 
-## Notes
-
-- All data is processed **locally on your PC** (LAN/local usage only).
-- Some advanced telemetry integrations are improved when **ACE/CBA** features are available.
-
----
-
-## License
-
-[Custom Non-Commercial Mod License (NCML)](LICENSE.txt) © 2026 ArnieP
-
-- ✅ Free to use, modify and redistribute
-- ✅ Must credit the original author (ArnieP)
-- ❌ No commercial use
-- ❌ Derivative works must use the same license
-
 ## 🗂️ Project Structure
 
 | Component | Folder / File | Purpose |

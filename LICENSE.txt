@@ -24,30 +24,3 @@ Permission is hereby granted to any person to use, modify, and distribute this s
    This software is provided "as is", without warranty of any kind.
 
 By using this software, you agree to these terms.
-
-Custom License – Non-Commercial Mod License (NCML)
-
-Copyright (c) 2026 ArnieP
-
-Permission is hereby granted to any person to use, modify, and distribute this software, subject to the following conditions:
-
-1. Attribution
-   You must give appropriate credit to the original author ArnieP and provide a link to the original project when possible.
-
-2. Non-Commercial Use Only
-   You may NOT use this software or any derivative work for commercial purposes. This includes, but is not limited to:
-
-   * Selling the software
-   * Monetizing it via paywalls, donations tied to access, or subscriptions
-   * Including it in paid content or services
-
-3. Share-Alike
-   Any modified versions or derivative works must be distributed under the same license.
-
-4. No Removal of License
-   This license must be included in all copies or substantial portions of the software.
-
-5. No Warranty
-   This software is provided "as is", without warranty of any kind.
-
-By using this software, you agree to these terms.
