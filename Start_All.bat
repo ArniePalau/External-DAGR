@@ -5,25 +5,25 @@ title MicroDAGR Unified Launcher
 cd /d "%~dp0"
 
 if not exist "%~dp0Start_Bridge.bat" (
-    echo [ERROR] No s'ha trobat Start_Bridge.bat
+    echo [ERROR] Start_Bridge.bat was not found
     goto :end
 )
 
 if not exist "%~dp0Start_App.bat" (
-    echo [ERROR] No s'ha trobat Start_App.bat
+    echo [ERROR] Start_App.bat was not found
     goto :end
 )
 
 echo ==============================================
-echo Iniciant MicroDAGR amb un sol script
+echo Starting MicroDAGR with a single script
 echo ==============================================
-echo Obrint Bridge...
+echo Opening Bridge...
 start "MicroDAGR Bridge" cmd /k ""%~dp0Start_Bridge.bat""
 
-echo Obrint App...
+echo Opening App...
 start "MicroDAGR App" cmd /k ""%~dp0Start_App.bat""
 
-echo Fet. Pots tancar aquesta finestra.
+echo Done. You can close this window.
 
 :end
 endlocal

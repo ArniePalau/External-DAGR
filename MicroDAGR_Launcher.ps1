@@ -51,7 +51,7 @@ $title.Location = New-Object System.Drawing.Point(18, 14)
 $form.Controls.Add($title)
 
 $sub = New-Object System.Windows.Forms.Label
-$sub.Text = 'Arrenca App + Bridge, obre enllacos i monitoritza connexions en temps real.'
+$sub.Text = 'Start App + Bridge, open links, and monitor connections in real time.'
 $sub.AutoSize = $true
 $sub.ForeColor = [System.Drawing.Color]::FromArgb(180, 188, 205)
 $sub.Location = New-Object System.Drawing.Point(20, 45)
@@ -134,7 +134,7 @@ function New-StatusLabel {
     $form.Controls.Add($caption)
 
     $value = New-Object System.Windows.Forms.Label
-    $value.Text = 'Desconnectat'
+    $value.Text = 'Disconnected'
     $value.AutoSize = $true
     $value.Font = New-Object System.Drawing.Font('Segoe UI Semibold', 10)
     $value.ForeColor = [System.Drawing.Color]::FromArgb(220, 90, 90)
@@ -146,9 +146,9 @@ function New-StatusLabel {
 
 $lblBridgeState = New-StatusLabel -Title 'Bridge' -X 20 -Y 132
 $lblAppState = New-StatusLabel -Title 'App (Vite)' -X 20 -Y 157
-$lblAppConnected = New-StatusLabel -Title 'App connectada al Bridge' -X 20 -Y 182
-$lblModConnected = New-StatusLabel -Title 'Mod connectat (RPT live)' -X 20 -Y 207
-$lblWorld = New-StatusLabel -Title 'Mapa actiu' -X 20 -Y 232
+$lblAppConnected = New-StatusLabel -Title 'App connected to Bridge' -X 20 -Y 182
+$lblModConnected = New-StatusLabel -Title 'Mod connected (RPT live)' -X 20 -Y 207
+$lblWorld = New-StatusLabel -Title 'Active map' -X 20 -Y 232
 
 $linkLocal = New-Object System.Windows.Forms.LinkLabel
 $linkLocal.Text = "Local: $($script:LocalAppUrl)"
@@ -178,7 +178,7 @@ $linkBridge.Location = New-Object System.Drawing.Point(540, 182)
 $form.Controls.Add($linkBridge)
 
 $logsLabel = New-Object System.Windows.Forms.Label
-$logsLabel.Text = 'Logs en viu'
+$logsLabel.Text = 'Live logs'
 $logsLabel.AutoSize = $true
 $logsLabel.Font = New-Object System.Drawing.Font('Segoe UI Semibold', 11)
 $logsLabel.Location = New-Object System.Drawing.Point(20, 270)
@@ -246,8 +246,8 @@ function Set-Status {
     param(
         [System.Windows.Forms.Label]$Label,
         [bool]$IsOnline,
-        [string]$OnlineText = 'Connectat',
-        [string]$OfflineText = 'Desconnectat'
+        [string]$OnlineText = 'Connected',
+        [string]$OfflineText = 'Disconnected'
     )
 
     $uiUpdate = [System.Action]{
@@ -285,20 +285,20 @@ function Start-ManagedProcess {
     try {
         $fullPath = Join-Path $script:RootDir $BatchFile
         if (-not (Test-Path -LiteralPath $fullPath)) {
-            Append-Log -Box $LogBox -Prefix $Name -Line "No s'ha trobat $BatchFile"
+            Append-Log -Box $LogBox -Prefix $Name -Line "$BatchFile was not found"
             return $null
         }
 
         $arg = "/c `"`"$fullPath`"`""
         $proc = Start-Process -FilePath 'cmd.exe' -ArgumentList $arg -WorkingDirectory $script:RootDir -PassThru -WindowStyle Hidden
 
-        Append-Log -Box $LogBox -Prefix $Name -Line ("Procés iniciat. PID=" + $proc.Id)
+        Append-Log -Box $LogBox -Prefix $Name -Line ("Process started. PID=" + $proc.Id)
 
         return [PSCustomObject]@{
             Process = $proc
         }
     } catch {
-        Append-Log -Box $LogBox -Prefix $Name -Line ("Error iniciant procés: " + $_.Exception.Message)
+        Append-Log -Box $LogBox -Prefix $Name -Line ("Error starting process: " + $_.Exception.Message)
         return $null
     }
 }
@@ -321,10 +321,10 @@ function Stop-ManagedProcess {
             } catch {
                 $Managed.Process.Kill($true)
             }
-            Append-Log -Box $LogBox -Prefix $Name -Line 'Procés aturat.'
+            Append-Log -Box $LogBox -Prefix $Name -Line 'Process stopped.'
         }
     } catch {
-        Append-Log -Box $LogBox -Prefix $Name -Line ("Error aturant procés: " + $_.Exception.Message)
+        Append-Log -Box $LogBox -Prefix $Name -Line ("Error stopping process: " + $_.Exception.Message)
     }
 }
 
@@ -341,7 +341,7 @@ $btnStart.Add_Click({
             $script:ManagedApp = Start-ManagedProcess -Name 'App' -BatchFile 'Start_App.bat' -LogBox $txtAppLog
         }
     } catch {
-        Append-Log -Box $txtBridgeLog -Prefix 'Launcher' -Line ("Error a Start All: " + $_.Exception.Message)
+        Append-Log -Box $txtBridgeLog -Prefix 'Launcher' -Line ("Error in Start All: " + $_.Exception.Message)
     }
 })
 
@@ -352,7 +352,7 @@ $btnStop.Add_Click({
         $script:ManagedBridge = $null
         $script:ManagedApp = $null
     } catch {
-        Append-Log -Box $txtBridgeLog -Prefix 'Launcher' -Line ("Error a Stop All: " + $_.Exception.Message)
+        Append-Log -Box $txtBridgeLog -Prefix 'Launcher' -Line ("Error in Stop All: " + $_.Exception.Message)
     }
 })
 
@@ -402,12 +402,12 @@ $healthTimer.Add_Tick({
     }
 
     Set-Status -Label $lblBridgeState -IsOnline ($bridgeHealthy -or $bridgeProcessRunning)
-    Set-Status -Label $lblAppState -IsOnline $appProcessRunning -OnlineText 'Iniciada' -OfflineText 'Aturada'
+    Set-Status -Label $lblAppState -IsOnline $appProcessRunning -OnlineText 'Started' -OfflineText 'Stopped'
     Set-Status -Label $lblAppConnected -IsOnline $appConnected
     Set-Status -Label $lblModConnected -IsOnline $modConnected
 
     $worldOnline = $activeWorld -ne '---'
-    Set-Status -Label $lblWorld -IsOnline $worldOnline -OnlineText $activeWorld -OfflineText 'Sense telemetria'
+    Set-Status -Label $lblWorld -IsOnline $worldOnline -OnlineText $activeWorld -OfflineText 'No telemetry'
 })
 
 $healthTimer.Start()

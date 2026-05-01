@@ -1,15 +1,15 @@
 @echo off
 title MicroDAGR Mobile App Demo
 
-:: Ens assegurem que el PATH tingui Node
+:: Ensure PATH includes Node.
 set "PATH=%PATH%;%ProgramFiles%\nodejs\;%SystemDrive%\Program Files\nodejs\"
 
 echo ==============================================
-echo Iniciant Servidor Web i obrint el Navegador...
+echo Starting web server and opening the browser...
 echo ==============================================
 cd "microdagr-app"
 
-:: Inicia el servidor i obre la finestra
+:: Start the server and open the window.
 npm run dev -- --host --port 5173 --strictPort
 
 pause

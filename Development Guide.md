@@ -1,67 +1,67 @@
 # MicroDAGR Mobile App - Development Guide
 
-## 1. Visió General
-L'objectiu principal d'aquest projecte és crear una aplicació mòbil per a dispositius Android (APK) i posteriorment per a iOS, que reprodueixi fidelment el dispositiu **MicroDAGR** inclòs al mod **ACE3** per l'Arma 3.
+## 1. Overview
+The main goal of this project is to create a mobile application for Android devices (APK), and later for iOS, that faithfully reproduces the **MicroDAGR** device included in the **ACE3** mod for Arma 3.
 
-A diferència d'una reproducció purament visual, l'app ha d'estar vinculada en temps real amb el joc (live-telemetry). Això significa que la informació mostrada a l'app (com ara l'azimut, les coordenades, la velocitat i els waypoints) ha de ser extreta del personatge que s'està utilitzant a l'Arma 3 al mateix moment. A més, des de l'app es podrà interactuar amb la interfície del MicroDAGR del joc.
+Unlike a purely visual reproduction, the app must be linked to the game in real time through live telemetry. This means that the information shown in the app, such as azimuth, coordinates, speed, and waypoints, must be extracted from the active Arma 3 character at the same moment it is displayed. The app should also be able to interact with the in-game MicroDAGR interface.
 
-## 2. Investigació i Arxius Base
-Durant la meva exploració, he analitzat l'addon del MicroDAGR original d'ACE3:
-- **Lògica de la Interfície (`fnc_updateDisplay.sqf`)**: 
-  - Utilitza funcions com `CBA_fnc_headDir` per a l'azimut/heading.
-  - La posició s'obté amb `getPosASL ACE_player`, convertida després a format MGRS i referència de mapa amb `EFUNC(common,getMapGridFromPos)`.
-  - La velocitat s'obté de `speed (vehicle ACE_player)`.
-  - El sistema de waypoints es llegeix d'una variable interna que gestiona l'app i utilitza `[ACE_player] call BIS_fnc_dirTo` per a la distància i rumbs respecte al waypoint.
+## 2. Research and Base Files
+During the initial exploration, the original ACE3 MicroDAGR addon was analyzed:
+- **Interface logic (`fnc_updateDisplay.sqf`)**:
+  - It uses functions such as `CBA_fnc_headDir` for azimuth/heading.
+  - Position is read with `getPosASL ACE_player`, then converted to MGRS format and a map-grid reference with `EFUNC(common,getMapGridFromPos)`.
+  - Speed is read from `speed (vehicle ACE_player)`.
+  - The waypoint system is read from an internal variable managed by the app and uses `[ACE_player] call BIS_fnc_dirTo` for distance and bearing relative to the waypoint.
 
-## 3. Arquitectura Proposada
-Per aconseguir que l'App estigui vinculada a l'Arma 3, desenvoluparem l'arquitectura en **3 Capes**:
+## 3. Proposed Architecture
+To link the app to Arma 3, the architecture is split into **3 layers**:
 
-1. **El Mod / Addon (Arma 3 Component)**
-   - Crearem un petit *script/addon* en SQF que s'executarà de fons. La seva funció serà llegir i injectar constantment (ex. cada 0.2 segons) les variables rellevants com Posició, Heading, Velocitat, i Punts de ruta del MicroDAGR.
-   - Enviarà i rebrà aquesta informació fora de l'entorn del joc.
-   
-2. **El Servidor Pont (Local Bridge)**
-   - Per comunicar el joc amb un mòbil extern, necessitàrem transportar les dades.
-   - Es crearà un petit servidor web a l'PC que funciona com a intermediari entre la informació proveïda per l'Arma 3 (ex. a través d'una extensió d'Arma existent o un tracker en NodeJS/C#) i l'app mòbil usant comunicació WebSocket a la freqüència de la xarxa local (Wi-Fi).
+1. **Mod / Addon (Arma 3 Component)**
+   - Create a small SQF *script/addon* that runs in the background. Its purpose is to continuously read and inject relevant variables such as position, heading, speed, and MicroDAGR route points, for example every 0.2 seconds.
+   - Send and receive this information outside the game environment.
 
-3. **L'Aplicació Mòbil (Frontend)**
-   - S'utilitzarà un framework modern (React / Vite) per a desenvolupament àgil web, dissenyant la rèplica visual interactiva del MicroDAGR amb alta atenció a les animacions, fluïdesa i aparença "premium".
-   - Mitjançant *Capacitor*, el codi web es convertirà a aplicació mòbil per generar l'APK.
-   - S'alimentarà via WebSockets de les dades del Servidor Pont.
+2. **Bridge Server (Local Bridge)**
+   - To connect the game with an external mobile device, the data must be transported out of Arma 3.
+   - A small web server on the PC acts as middleware between information provided by Arma 3, for example through an existing Arma extension or a NodeJS/C# tracker, and the mobile app over WebSocket communication on the local network (Wi-Fi).
 
-## 4. Components Desenvolupats i Instruccions d'Ús
+3. **Mobile Application (Frontend)**
+   - Use a modern framework (React / Vite) for agile web development, designing an interactive MicroDAGR visual replica with strong attention to animation, smoothness, and a premium appearance.
+   - Use *Capacitor* to convert the web code into a mobile app and generate the APK.
+   - Feed the app through WebSockets with data from the bridge server.
 
-A continuació es detalla l'estat actual i com posar-ho tot en marxa:
+## 4. Developed Components and Usage Instructions
 
-### 1. El Mod d'Arma 3 (`microdagr_bridge`)
-- **Acció**: S'han preparat els arxius de configuració i l'script base DINS d'aquesta mateixa carpeta a `microdagr_bridge`.
-- Aquest add-on usa `diag_log` per expulsar la informació de telemetria al fitxer de log `.rpt` de l'Arma 3 de forma contínua amb un impacte gairebé invisible al rendiment en comparació de llibreries pesades via TCP.
-- **Instruccions d'Empaquetat (Addon Builder)**: Per evitar l'error "Script not found", cal crear el `.pbo` correctament:
-  1. Obre l'Addon Builder de les Arma 3 Tools.
-  2. **Source Directory**: Selecciona l'última carpeta de dins: `\@microdagr_bridge\addons\microdagr_bridge`
-  3. **Destination Directory**: Toca deixar-ho a la carpeta justa abans: `\@microdagr_bridge\addons`
-  4. Desmarca la casella "Binarize".
-  5. Entra a "Options" (a la dreta) i escriu com a **Addon Prefix**: `microdagr_bridge`
-  6. Fes clic a Pack. Acaba col·locant la carpeta root `@microdagr_bridge` com a mod local al joc.
+The current state and startup flow are detailed below:
 
-### 2. Utilitats Ràpides per Executar (Scripts `.bat`)
-S'han generat dos arxius a la teva carpeta principal per engegar el Node i l'aplicació amb un simple doble clic (evitant així haver-ho de fer tot per consola).
-- **`Start_Bridge.bat`**: Llegeix a temps real i "escolta" l'arxiu RPT del joc per captar la telemetria, oferint les dades al port 8080.
-- **`Start_App.bat`**: Engega Vite React, compila la interfície dinàmica i l'obre de seguida al teu navegador de preferència.
+### 1. Arma 3 Mod (`microdagr_bridge`)
+- **Action**: Configuration files and the base script have been prepared inside this same folder at `microdagr_bridge`.
+- This add-on uses `diag_log` to write telemetry information continuously to the Arma 3 `.rpt` log file, with almost invisible performance impact compared with heavier TCP libraries.
+- **Packaging Instructions (Addon Builder)**: To avoid the "Script not found" error, create the `.pbo` correctly:
+  1. Open Addon Builder from Arma 3 Tools.
+  2. **Source Directory**: Select the innermost folder: `\@microdagr_bridge\addons\microdagr_bridge`
+  3. **Destination Directory**: Select the folder immediately above it: `\@microdagr_bridge\addons`
+  4. Clear the "Binarize" checkbox.
+  5. Open "Options" on the right and set **Addon Prefix** to: `microdagr_bridge`
+  6. Click Pack. Finish by loading the root `@microdagr_bridge` folder as a local mod in the game.
 
-### Pròxims Passos / Millores per al Futur
-S'aconsella, un cop es tingui el sistema a l'Arma funcionant i validat en temps real (sense missatges d'error a consola JSON i visualitzant l'azimut o velocitat corecta), treballar a fons l'extracció de *Waypoints List* dins la missió usant les funcions nadiues `ace_microdagr_fnc_...` per enviar el llistat i poder visualitzar i mapejar millor l'acció a l'app directament sota format de coordenades en comptes de missatges de prova mockejats.
+### 2. Quick Run Utilities (`.bat` Scripts)
+Two files have been generated in the root folder so Node and the application can be started with a double-click, without having to run everything from the console.
+- **`Start_Bridge.bat`**: Reads and watches the game RPT file in real time to capture telemetry, then serves the data on port 8080.
+- **`Start_App.bat`**: Starts Vite React, compiles the dynamic interface, and opens it in your preferred browser.
 
-## 5. Extracció de Mapes: Topogràfic i Satèl·lit
-Per tal de proveir mapes reals d'Arma 3 a l'aplicació, s'ha implementat un pipeline híbrid de processament d'imatges.
+### Next Steps / Future Improvements
+Once the Arma system is working and validated in real time, with no JSON console errors and with azimuth or speed visible, the next recommended task is deeper extraction of the *Waypoints List* from the mission using native `ace_microdagr_fnc_...` functions. This would allow the full list to be sent, displayed, and mapped more accurately in the app as coordinates instead of mocked test messages.
 
-### Extracció Topogràfica (estat actual)
-El flux principal actual usa extracció nativa des d'arxius del joc (PBO/PAA) per generar el mapa final de forma consistent.
-La via d'exportació in-game amb captures de pantalla s'ha retirat del flux estàndard per reduir complexitat i evitar inconsistències segons focus/finestra del motor.
+## 5. Map Extraction: Topographic and Satellite
+To provide real Arma 3 maps to the application, a hybrid image-processing pipeline has been implemented.
 
-### Fallback Automàtic: Satèl·lit (PBO Extraction)
-En cas que l'exportació in-game falli o es prefereixi dependre exclusivament del disc d'Arma, l'eina `map-extractor.js` ara conté una rutina directa que:
-1. Actua instintivament analitzant les carpetes d'Arma si no troba tiles pre-exportats.
-2. Identifica directament la imatge base del terreny (`pictureMap_ca.paa`) buscant pel pbo principal de mapa (`map_<world>_data.pbo`) gràcies a l'utilitat *PBO Manager (`pboc.exe`)*.
-3. El converteix de format natiu d'Arma (PAa) a PNG sota demanda abans que l'App el demani (Pla A).
-4. S'han suprimit les "PBO layers" residuals que causaven artefactes estranys (`_lco.paa`), per garantir que el producte processat sigui exclusivament cartografia vàlida per a navegació.
+### Topographic Extraction (current state)
+The current main flow uses native extraction from game files (PBO/PAA) to generate the final map consistently.
+The in-game screenshot export path has been removed from the standard flow to reduce complexity and avoid inconsistencies caused by engine window focus.
+
+### Automatic Satellite Fallback (PBO Extraction)
+If in-game export fails, or if the flow should depend exclusively on Arma files on disk, `map-extractor.js` now contains a direct routine that:
+1. Automatically scans Arma folders when no pre-exported tiles are found.
+2. Identifies the base terrain image (`pictureMap_ca.paa`) by searching the main map PBO (`map_<world>_data.pbo`) through *PBO Manager (`pboc.exe`)*.
+3. Converts it from Arma's native PAA format to PNG on demand before the app requests it (Plan A).
+4. Removes residual "PBO layers" that caused unusual artifacts (`_lco.paa`), ensuring the processed product is valid cartography for navigation.

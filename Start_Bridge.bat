@@ -10,7 +10,7 @@ set "LAP=%LocalAppData%"
 set "PATH=%PATH%;!PF!\nodejs\;!PF86!\nodejs\;!LAP!\Programs\nodejs\"
 
 echo ==============================================
-echo Iniciant MicroDAGR Telemetry Bridge (Arma 3)
+echo Starting MicroDAGR Telemetry Bridge (Arma 3)
 echo ==============================================
 
 set "SCRIPT_ROOT=%~dp0"
@@ -26,7 +26,7 @@ if not defined NODE_EXE (
 )
 
 if not defined NODE_EXE (
-	echo [ERROR] Node.js no trobat. Instal-la Node LTS i torna a executar Start_Bridge.bat
+	echo [ERROR] Node.js was not found. Install Node LTS and run Start_Bridge.bat again.
 	goto :end
 )
 
@@ -37,7 +37,7 @@ cd /d "%~dp0arma-bridge"
 
 for /f "delims=" %%P in ('powershell -NoProfile -Command "(Get-NetTCPConnection -LocalPort 8080 -State Listen -ErrorAction SilentlyContinue ^| Select-Object -First 1 -ExpandProperty OwningProcess)"') do set "BRIDGE_PID=%%P"
 if defined BRIDGE_PID (
-	echo [WARN] Port 8080 ocupat per PID !BRIDGE_PID!. Tancant instancia anterior...
+	echo [WARN] Port 8080 is in use by PID !BRIDGE_PID!. Closing previous instance...
 	taskkill /PID !BRIDGE_PID! /F >nul 2>nul
 	set "BRIDGE_PID="
 )
@@ -82,7 +82,7 @@ if not defined MICRODAGR_PBO_EXTRACT_CMD (
 		set "MICRODAGR_PBO_EXTRACT_CMD="!PBO_TOOL!" -P "{input}" "{output}""
 		echo [AutoDetect] PBO extractor: !PBO_TOOL!
 	) else (
-		echo [AutoDetect] PBO extractor no trobat. Algunes textures de mods poden quedar en placeholder.
+		echo [AutoDetect] PBO extractor was not found. Some mod textures may remain as placeholders.
 	)
 )
 
@@ -94,19 +94,19 @@ if not defined MICRODAGR_PAA_CONVERT_CMD (
 		echo [AutoDetect] PAA converter: !PAA_TOOL!
 	) else (
 		set "MICRODAGR_PAA_CONVERT_CMD="!NODE_EXE!" .\paa-to-png.mjs --input "{input}" --output "{output}" --max-dimension !MICRODAGR_MAP_MAX_DIMENSION!"
-		echo [AutoDetect] PAA converter extern no trobat. Usant converter intern Node: paa-to-png.mjs
+		echo [AutoDetect] External PAA converter was not found. Using internal Node converter: paa-to-png.mjs
 	)
 )
 
 echo.
-echo Executant diagnosi d'eines (PBO/PAA)...
+echo Running tool diagnostics (PBO/PAA)...
 "!NODE_EXE!" .\tool-check.js
 echo.
 
-echo Connectant amb la lectura del RPT...
+echo Connecting to RPT reader...
 where npm >nul 2>nul
 if errorlevel 1 (
-	echo [WARN] npm no trobat al PATH. Arrencant bridge directament amb Node.
+	echo [WARN] npm was not found on PATH. Starting bridge directly with Node.
 	"!NODE_EXE!" .\server.js
 ) else (
 	npm start
@@ -124,8 +124,8 @@ set "ADDON_PBO=%SCRIPT_ROOT%@microdagr_bridge\addons\microdagr_bridge.pbo"
 if not exist "!ADDON_SRC!\init.sqf" exit /b 0
 
 if not exist "!ADDON_PBO!" (
-	echo [WARN] No s'ha trobat !ADDON_PBO!
-	echo [WARN] Arma podria no carregar la versio actual del bridge.
+	echo [WARN] !ADDON_PBO! was not found.
+	echo [WARN] Arma may not load the current bridge version.
 	echo.
 	exit /b 0
 )
@@ -134,9 +134,9 @@ set "SYNC_STATE=UNKNOWN"
 for /f "delims=" %%S in ('powershell -NoProfile -Command "$pbo=$env:ADDON_PBO; $src=$env:ADDON_SRC; if (!(Test-Path -LiteralPath $pbo) -or !(Test-Path -LiteralPath $src)) { 'UNKNOWN'; exit 0 }; $pboTime=(Get-Item -LiteralPath $pbo).LastWriteTimeUtc; $latestSrc=(Get-ChildItem -LiteralPath $src -File -Recurse | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1); if ($null -eq $latestSrc) { 'UNKNOWN'; exit 0 }; if ($latestSrc.LastWriteTimeUtc -gt $pboTime) { 'STALE' } else { 'OK' }"') do set "SYNC_STATE=%%S"
 
 if /I "!SYNC_STATE!"=="STALE" (
-	echo [WARN] microdagr_bridge.pbo sembla DESACTUALITZAT respecte al codi font.
-	echo [WARN] Reempaqueta ".\@microdagr_bridge\addons\microdagr_bridge" cap a ".\@microdagr_bridge\addons\microdagr_bridge.pbo"
-	echo [WARN] si no, Arma seguira executant scripts antics.
+	echo [WARN] microdagr_bridge.pbo appears OUTDATED compared with the source code.
+	echo [WARN] Repack ".\@microdagr_bridge\addons\microdagr_bridge" into ".\@microdagr_bridge\addons\microdagr_bridge.pbo"
+	echo [WARN] otherwise Arma will keep running old scripts.
 	echo.
 )
 exit /b 0
